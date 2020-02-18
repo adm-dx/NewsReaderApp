@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NewsReaderApp</string>
+    <string name="act2_button">Ok</string>
 </resources>
