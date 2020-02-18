@@ -3,7 +3,12 @@ package com.example.newsreaderapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -14,20 +19,20 @@ import io.reactivex.schedulers.Schedulers
 class MainActivity : AppCompatActivity() {
 
     lateinit var vText: TextView
-    lateinit var vList: LinearLayout
+    lateinit var vList: ListView
     var request: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        vList = findViewById<LinearLayout>(R.id.act1_list)
+        vList = findViewById<ListView>(R.id.act1_listView)
         val o =
             createRequest("https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.yahoo.com%2Fnews%2Frss%2Fworld")
                 .map { Gson().fromJson(it, Feed::class.java) }
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
         request = o.subscribe({
-            showLinearLayout(it.items)
+            showListView(it.items)
         }, {
             Log.e("test", "", it)
         })
@@ -36,11 +41,15 @@ class MainActivity : AppCompatActivity() {
     fun showLinearLayout(feedList: ArrayList<FeedItem>) {
         val inflater = layoutInflater
         for (f in feedList) {
-            val view = inflater.inflate(R.layout.list_item, vList,false)
+            val view = inflater.inflate(R.layout.list_item, vList, false)
             val vTitle = view.findViewById<TextView>(R.id.item_title)
             vTitle.text = f.title
             vList.addView(view)
         }
+    }
+
+    fun showListView(feedList: ArrayList<FeedItem>){
+        vList.adapter=Adapter(feedList)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -82,3 +91,27 @@ class FeedItem(
     val thumbnail: String,
     val description: String
 )
+
+class Adapter(val items: ArrayList<FeedItem>) : BaseAdapter() {
+    override fun getItem(position: Int): Any {
+        return items[position]
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getCount(): Int {
+        return items.size
+    }
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val inflater = LayoutInflater.from(parent!!.context)
+        val view = convertView ?: inflater.inflate(R.layout.list_item, parent, false)
+        val vTitle = view.findViewById<TextView>(R.id.item_title)
+        val item = getItem(position) as FeedItem
+        vTitle.text = item.title
+        return view
+    }
+
+}
