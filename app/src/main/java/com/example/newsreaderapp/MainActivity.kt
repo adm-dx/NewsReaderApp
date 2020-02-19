@@ -1,6 +1,8 @@
 package com.example.newsreaderapp
 
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -151,7 +153,11 @@ class RecHolder(view: View) : RecyclerView.ViewHolder(view) {
         val vThumb = itemView.findViewById<ImageView>(R.id.item_thumb)
         vTitle.text = item.title
         vDesc.text = item.description
-
         Picasso.with(vThumb.context).load(item.urlToImage).into(vThumb)
+        itemView.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(item.url)
+            vThumb.context.startActivity(i)
+        }
     }
 }
