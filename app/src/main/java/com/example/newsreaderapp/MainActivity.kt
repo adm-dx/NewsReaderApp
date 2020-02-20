@@ -1,7 +1,6 @@
 package com.example.newsreaderapp
 
 import android.content.Intent
-import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -21,7 +20,6 @@ import io.reactivex.schedulers.Schedulers
 class MainActivity : AppCompatActivity() {
 
     lateinit var vText: TextView
-    lateinit var vList: ListView
     lateinit var vRecView: RecyclerView
     var request: Disposable? = null
 
@@ -41,20 +39,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun showLinearLayout(feedList: ArrayList<FeedItem>) {
-        val inflater = layoutInflater
-        for (f in feedList) {
-            val view = inflater.inflate(R.layout.list_item, vList, false)
-            val vTitle = view.findViewById<TextView>(R.id.item_title)
-            vTitle.text = f.title
-            vList.addView(view)
-        }
-    }
-
-    fun showListView(feedList: ArrayList<FeedItem>) {
-        vList.adapter = Adapter(feedList)
-    }
-
     fun showRecView(feedList: ArrayList<FeedItem>) {
         vRecView.adapter = RecAdapter(feedList)
         vRecView.layoutManager = LinearLayoutManager(this)
@@ -66,21 +50,6 @@ class MainActivity : AppCompatActivity() {
             val str = data.getStringExtra("tag2")
             vText.text = str
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        //is used only for two displays one time
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //to start animations and processes. first application view after launch
-    }
-
-    override fun onPause() {
-        super.onPause()
-        //may be the last step of lifecycle, system can shutdown it here
     }
 
     override fun onDestroy() {
@@ -99,30 +68,6 @@ class FeedItem(
     val urlToImage: String,
     val description: String
 )
-
-class Adapter(val items: ArrayList<FeedItem>) : BaseAdapter() {
-    override fun getItem(position: Int): Any {
-        return items[position]
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getCount(): Int {
-        return items.size
-    }
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val inflater = LayoutInflater.from(parent!!.context)
-        val view = convertView ?: inflater.inflate(R.layout.list_item, parent, false)
-        val vTitle = view.findViewById<TextView>(R.id.item_title)
-        val item = getItem(position) as FeedItem
-        vTitle.text = item.title
-        return view
-    }
-
-}
 
 class RecAdapter(val items: ArrayList<FeedItem>) : RecyclerView.Adapter<RecHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecHolder {
