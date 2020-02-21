@@ -43,14 +43,14 @@ class MainActivity : AppCompatActivity() {
         vRecView.adapter = RecAdapter(feedList)
         vRecView.layoutManager = LinearLayoutManager(this)
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (data != null) {
-            val str = data.getStringExtra("tag2")
-            vText.text = str
-        }
-    }
+//
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (data != null) {
+//            val str = data.getStringExtra("tag2")
+//            vText.text = str
+//        }
+//    }
 
     override fun onDestroy() {
         request?.dispose()
